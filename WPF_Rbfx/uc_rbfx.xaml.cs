@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Urho3DNet;
+using WPF_Rbfx.Models;
 using Application = Urho3DNet.Application;
 using Color = Urho3DNet.Color;
 
@@ -36,7 +37,7 @@ namespace WPF_Rbfx
 				System.Windows.Forms.Panel _pnlSched = new System.Windows.Forms.Panel();
 				WindowsFormsHost windowsFormsHost1 = new WindowsFormsHost();
 				windowsFormsHost1.Child = _pnlSched;
-				_Grid.Children.Add(windowsFormsHost1);				 
+				_Grid.Children.Add(windowsFormsHost1);
 
 				DemoApplication.Parent = _pnlSched.Handle;
 				Loaded += delegate
@@ -88,7 +89,7 @@ namespace WPF_Rbfx
 		public override void Setup()
 		{
 			engineParameters_[Urho3D.EpFullScreen] = false;
-			engineParameters_[Urho3D.EpExternalWindow] = Parent;
+		//	engineParameters_[Urho3D.EpExternalWindow] = Parent;
 			engineParameters_[Urho3D.EpWindowWidth] = 800;
 			engineParameters_[Urho3D.EpWindowHeight] = 600;
 			engineParameters_[Urho3D.EpWindowTitle] = "Hello C#";
@@ -99,7 +100,7 @@ namespace WPF_Rbfx
 		public override void Start()
 		{
 			UI.Input.SetMouseVisible(true);
-
+			Cache.AddResourceDir("./Resources/3D");
 			// Viewport
 			_scene = new Scene(Context);
 			_scene.CreateComponent<Octree>();
@@ -129,6 +130,26 @@ namespace WPF_Rbfx
 			_light.CreateComponent<Light>();
 			_light.Position = (new Vector3(0, 2, -1));
 			_light.LookAt(Vector3.Zero);
+
+
+			//Wire-plane
+
+			#region Method doesn't work
+			//var wirenode = _scene.CreateChild("WirePlane");
+			//wirenode.CreateComponent<WirePlane>();
+			#endregion
+
+			#region Method doesn't work		 
+			//_scene.CreateComponent<WirePlane>();
+			#endregion
+
+			#region Working Method
+			var wireplan = new WirePlane(Context);
+			//Color is never Changed to Yellow ???
+			wireplan.Color = Color.Yellow;
+			_scene.AddComponent(wireplan, wireplan.ID, CreateMode.Local); 
+			#endregion
+
 
 			SubscribeToEvent(E.Update, args =>
 			{
