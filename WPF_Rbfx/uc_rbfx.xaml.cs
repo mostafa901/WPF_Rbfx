@@ -87,14 +87,13 @@ namespace WPF_Rbfx
 
 		public override void Setup()
 		{
-			var currentDir = Directory.GetCurrentDirectory();
 			engineParameters_[Urho3D.EpFullScreen] = false;
 			engineParameters_[Urho3D.EpExternalWindow] = Parent;
 			engineParameters_[Urho3D.EpWindowWidth] = 800;
 			engineParameters_[Urho3D.EpWindowHeight] = 600;
 			engineParameters_[Urho3D.EpWindowTitle] = "Hello C#";
 			string ModelFolder = @"D:\Revit_API\Downloaded_Library\Source\rbfx\cmake-build\bin\Data";
-			engineParameters_[Urho3D.EpResourcePrefixPaths] = $"{currentDir};{currentDir}/..;{ModelFolder};{ModelFolder}/..;";
+			engineParameters_[Urho3D.EpResourcePrefixPaths] = $"{ModelFolder};{ModelFolder}/..;";
 		}
 
 		public override void Start()
