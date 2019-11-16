@@ -109,7 +109,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Urho3D.dll">
+    <None Include="..\..\..\..\Downloaded_Library\Source\rbfx\cmake-build\bin\Debug\Urho3D.dll">
+      <Link>Urho3D.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

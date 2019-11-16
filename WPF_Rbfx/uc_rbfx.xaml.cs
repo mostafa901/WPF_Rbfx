@@ -36,11 +36,12 @@ namespace WPF_Rbfx
 				System.Windows.Forms.Panel _pnlSched = new System.Windows.Forms.Panel();
 				WindowsFormsHost windowsFormsHost1 = new WindowsFormsHost();
 				windowsFormsHost1.Child = _pnlSched;
-				_Grid.Children.Add(windowsFormsHost1);				 
+				_Grid.Children.Add(windowsFormsHost1);
 
 				DemoApplication.Parent = _pnlSched.Handle;
 				Loaded += delegate
 				{
+
 					Task.Run(() =>
 					{
 						using (var context = new Context())
@@ -51,6 +52,8 @@ namespace WPF_Rbfx
 							}
 						}
 					});
+
+					
 				};
 
 			}
@@ -59,6 +62,8 @@ namespace WPF_Rbfx
 				Debug.WriteLine(ex.ToString());
 			}
 		}
+
+
 	}
 
 	class DemoApplication : Application
@@ -88,7 +93,7 @@ namespace WPF_Rbfx
 		public override void Setup()
 		{
 			engineParameters_[Urho3D.EpFullScreen] = false;
-			engineParameters_[Urho3D.EpExternalWindow] = Parent;
+			engineParameters_[Urho3D.EpExternalWindow] = Parent; //todo: there is a know dispose bug when closing WPF window
 			engineParameters_[Urho3D.EpWindowWidth] = 800;
 			engineParameters_[Urho3D.EpWindowHeight] = 600;
 			engineParameters_[Urho3D.EpWindowTitle] = "Hello C#";
@@ -109,7 +114,6 @@ namespace WPF_Rbfx
 			_viewport.Scene = _scene;
 			_viewport.Camera = (_camera.CreateComponent<Camera>());
 			Engine.Renderer.SetViewport(0, _viewport);
-
 			// Background
 			Engine.Renderer.DefaultZone.FogColor = (new Color(0.5f, 0.5f, 0.7f));
 
@@ -131,18 +135,86 @@ namespace WPF_Rbfx
 			_light.LookAt(Vector3.Zero);
 
 			SubscribeToEvent(E.Update, args =>
-			{
-				var timestep = args[E.Update.TimeStep].Float;
-				Debug.Assert(this != null);
-
-				if (ImGui.Begin("Urho3D.NET"))
-				{
-					ImGui.TextColored(Color.Red, $"Hello world from C#.\nFrame time: {timestep}");
-				}
-				ImGui.End();
+			{ 
+				SetupMenu(); 
 			});
 		}
+
+		bool openup = false;
+		private void SetupMenu()
+		{
+			if (ImGui.BeginMainMenuBar())
+			{
+				if (ImGui.BeginMenu("File"))
+				{
+					if (ImGui.MenuItem("Show Message", ""))
+					{
+						showmessage();
+					}
+
+					if (ImGui.MenuItem("PopupModaltest", ""))
+					{
+						//import();
+						openup = true;
+					}
+
+					if (ImGui.MenuItem("Popuptest", ""))
+					{
+						ImGui.OpenPopup("pop");
+					}
+
+					ImGui.EndMenu();
+				}
+
+				ImGui.EndMainMenuBar();
+			}
+
+			if (openup) import();
+
+			if (ImGui.BeginPopup("pop"))
+			{
+				if (ImGui.Button("Test"))
+				{
+					showmessage("test from Popup not modal");
+				}
+			}
+		}
+
+		void showmessage(string message = "Hello")
+		{
+			new Urho3DNet.MessageBox(Context, message, "first Click");
+		}
+
+		void import()
+		{
+			//ImGui.ShowDemoWindow(ref openup);
+
+			if (ImGui.BeginPopupModal("p", ref openup))
+			{
+				ImGui.Text("something?.");
+				if (ImGui.Button("OK"))
+				{
+					showmessage("test from ModalPopup");
+					ImGui.CloseCurrentPopup();
+				}
+				if (ImGui.Button("Cancel")) ImGui.CloseCurrentPopup();
+
+				ImGui.EndPopup();
+
+
+			}
+		}
+
+
+
+
+
 	}
+
+
+
+
+
 
 	[ObjectFactory]
 	class RotateObject : LogicComponent
