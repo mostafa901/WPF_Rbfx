@@ -177,6 +177,7 @@ namespace WPF_Rbfx
 				{
 					showmessage("test from Popup not modal");
 				}
+				ImGui.EndPopup();
 			}
 		}
 
